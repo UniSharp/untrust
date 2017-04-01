@@ -12,7 +12,7 @@ trait UserTrait
     public function roles()
     {
         return $this->belongsToMany(
-            Config::get('untrust.role'),
+            Config::get('untrust.role', \App\Role::class),
             Config::get('untrust.user_roles_table', 'user_roles')
         )->withTimestamps();
     }
@@ -20,7 +20,7 @@ trait UserTrait
     public function permissions()
     {
         return $this->belongsToMany(
-            Config::get('untrust.permission'),
+            Config::get('untrust.permission', \App\Permission::class),
             Config::get('untrust.user_permissions_table', 'user_permissions')
         )->withTimestamps();
     }

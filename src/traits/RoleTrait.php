@@ -10,7 +10,7 @@ trait RoleTrait
     public function permissions()
     {
         return $this->belongsToMany(
-            Config::get('untrust.permission'),
+            Config::get('untrust.permission', \App\Permission::class),
             Config::get('untrust.role_permissions_table', 'role_permissions')
         )->withTimestamps();
     }
