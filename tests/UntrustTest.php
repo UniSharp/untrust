@@ -8,23 +8,29 @@ class UntrustTest extends TestCase
 {
     public function testRelations()
     {
-        $user = User::create([
-            'name' => 'foo',
-            'email' => 'foo@example.com',
+        $userA = User::create([
+            'name' => 'user-a',
+            'email' => 'user-a@example.com',
+            'password' => 'password',
+        ]);
+        $userB = User::create([
+            'name' => 'user-b',
+            'email' => 'user-b@example.com',
             'password' => 'password',
         ]);
 
-        $roleA = $user->roles()->create(['name' => 'role-a']);
-        $roleB = $user->roles()->create(['name' => 'role-b']);
+        $roleA = $userA->roles()->create(['name' => 'role-a']);
+        $roleB = $userA->roles()->create(['name' => 'role-b']);
+        $userB->roles()->attach($roleA);
 
         $roleA->permissions()->create(['name' => 'permission-a']);
         $roleA->permissions()->create(['name' => 'permission-b']);
         $roleB->permissions()->create(['name' => 'permission-c']);
-        $user->permissions()->create(['name' => 'permission-d']);
+        $userA->permissions()->create(['name' => 'permission-d']);
 
         $this->assertEquals(
             ['role-a', 'role-b'],
-            $user->roles->pluck('name')->toArray()
+            $userA->roles->pluck('name')->toArray()
         );
         $this->assertEquals(
             ['permission-a', 'permission-b'],
@@ -36,7 +42,11 @@ class UntrustTest extends TestCase
         );
         $this->assertEquals(
             ['permission-a', 'permission-b', 'permission-c', 'permission-d'],
-            $user->permissions->pluck('name')->toArray()
+            $userA->permissions->pluck('name')->toArray()
+        );
+        $this->assertEquals(
+            ['user-a', 'user-b'],
+            $roleA->users->pluck('name')->toArray()
         );
     }
 

@@ -6,6 +6,7 @@ use Closure;
 use Mockery as m;
 use CreateUsersTable;
 use Tests\Models\Role;
+use Tests\Models\User;
 use CreateUntrustTables;
 use Tests\Models\Permission;
 use Illuminate\Cache\CacheManager;
@@ -53,6 +54,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
         Config::shouldReceive('get')->andReturnUsing(function ($key, $default = null) {
             $configs = [
+                'untrust.user' => User::class,
                 'untrust.role' => Role::class,
                 'untrust.permission' => Permission::class,
             ];
