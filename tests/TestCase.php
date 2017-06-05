@@ -50,7 +50,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
         $app->shouldReceive('offsetGet');
 
         Schema::setFacadeApplication($app);
-        Schema::swap(Manager::Schema());
+        Schema::swap(Manager::schema());
 
         Config::shouldReceive('get')->andReturnUsing(function ($key, $default = null) {
             $configs = [
