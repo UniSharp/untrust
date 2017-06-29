@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use Illuminate\Support\Facades\Config;
+use Tests\Models\Role;
 use Tests\Models\User;
 
 class UntrustTest extends TestCase
@@ -148,5 +150,12 @@ class UntrustTest extends TestCase
         $this->assertTrue($user->hasPermission('biz', 'a'));
 
         $this->assertFalse($user->hasPermission('foo', 'bar'));
+    }
+
+    public function testRolesOfPermissions()
+    {
+        $role = Role::create(['name' => 'foo']);
+        $permission = $role->permissions()->create(['name' => 'biz']);
+        $this->assertEquals(1, $permission->roles->where('name', 'foo')->count());
     }
 }
