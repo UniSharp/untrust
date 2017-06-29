@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Support\Facades\Config;
+use Tests\Models\Permission;
 use Tests\Models\Role;
 use Tests\Models\User;
 
@@ -157,5 +158,30 @@ class UntrustTest extends TestCase
         $role = Role::create(['name' => 'foo']);
         $permission = $role->permissions()->create(['name' => 'biz']);
         $this->assertEquals(1, $permission->roles->where('name', 'foo')->count());
+    }
+
+    public function testUsersOfPermissions()
+    {
+        $userBiz = User::create([
+            'name' => 'biz',
+            'email' => 'biz@example.com',
+            'password' => 'password',
+        ]);
+        $userBaz = User::create([
+            'name' => 'baz',
+            'email' => 'baz@example.com',
+            'password' => 'password',
+        ]);
+
+        $role = Role::create(['name' => 'foo']);
+        $permission = Permission::create(['name' => 'bar']);
+
+        $userBiz->permissions()->attach($permission);
+        $role->permissions()->attach($permission);
+        $userBaz->roles()->attach($role);
+
+        $this->assertEquals(2, $permission->users->count());
+        $this->assertEquals(1, $permission->users->where('name', 'biz')->count());
+        $this->assertEquals(1, $permission->users->where('name', 'baz')->count());
     }
 }
