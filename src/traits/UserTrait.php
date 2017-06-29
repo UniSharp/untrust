@@ -41,22 +41,38 @@ trait UserTrait
         });
     }
 
-    public function hasRole($role)
+    public function hasRole(...$roles)
     {
-        if (!($role instanceof Model)) {
-            $role = $this->roles->where('name', $role)->first();
+        $roles = count($roles) == 1 && is_array($roles[0]) ? $roles[0] : $roles;
+
+        foreach ($roles as $role) {
+            if (!($role instanceof Model)) {
+                $role = $this->roles->where('name', $role)->first();
+            }
+
+            if ($this->roles->contains($role)) {
+                return true;
+            }
         }
 
-        return $this->roles->contains($role);
+        return false;
     }
 
-    public function hasPermission($permission)
+    public function hasPermission(...$permissions)
     {
-        if (!($permission instanceof Model)) {
-            $permission = $this->permissions->where('name', $permission)->first();
+        $permissions = count($permissions) == 1 && is_array($permissions[0]) ? $permissions[0] : $permissions;
+
+        foreach ($permissions as $permission) {
+            if (!($permission instanceof Model)) {
+                $permission = $this->permissions->where('name', $permission)->first();
+            }
+
+            if ($this->permissions->contains($permission)) {
+                return true;
+            }
         }
 
-        return $this->permissions->contains($permission);
+        return false;
     }
 
     public function isRoot()

@@ -111,4 +111,42 @@ class UntrustTest extends TestCase
 
         $this->assertFalse($user->isRoot());
     }
+
+    public function testMultiRole()
+    {
+        $user = User::create([
+            'name' => 'bar',
+            'email' => 'bar@example.com',
+            'password' => 'password',
+        ]);
+
+        $roleFoo = $user->roles()->create(['name' => 'foo']);
+        $roleBar = $user->roles()->create(['name' => 'bar']);
+
+        $this->assertTrue($user->hasRole($roleFoo, $roleBar));
+        $this->assertTrue($user->hasRole('foo', 'bar'));
+        $this->assertTrue($user->hasRole(['foo', 'bar']));
+        $this->assertTrue($user->hasRole('foo', 'a'));
+        $this->assertFalse($user->hasRole('a', 'b'));
+    }
+
+    public function testMultiPermissions()
+    {
+        $user = User::create([
+            'name' => 'biz',
+            'email' => 'biz@example.com',
+            'password' => 'password',
+        ]);
+
+        $role = $user->roles()->create(['name' => 'biz']);
+        $permissionBiz = $user->permissions()->create(['name' => 'biz']);
+
+        $permissionBaz = $role->permissions()->create(['name' => 'baz']);
+
+        $this->assertTrue($user->hasPermission($permissionBiz, $permissionBaz));
+        $this->assertTrue($user->hasPermission('biz', 'baz'));
+        $this->assertTrue($user->hasPermission('biz', 'a'));
+
+        $this->assertFalse($user->hasPermission('foo', 'bar'));
+    }
 }
